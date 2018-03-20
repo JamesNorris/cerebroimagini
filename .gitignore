@@ -2,6 +2,21 @@
 db
 incremental_db
 output_files
+simulation
+testbench # create for required verilog tb files
 
 # Quartus generated files
 CerebroImagini_description.txt
+*.cmp
+*.hex
+*.html
+*.rpt
+
+# TEST THESE:
+.qsys_edit
+*.sopcinfo
+*.xml
+*.bsf
+*.ppf
+*.debuginfo
+*.bak

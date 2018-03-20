@@ -1,7 +1,7 @@
 module collect(//collect bits from the ADC into a 4-bit register
 	input clk,
 	input in,//input bit
-	output out,
+	output[0:3] out,
 	output rdy
 );
 

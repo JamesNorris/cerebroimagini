@@ -1,6 +1,5 @@
 # executables
 *.exe
-*.py
 *.pyc
 
 # Quartus generated directories

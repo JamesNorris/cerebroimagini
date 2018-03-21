@@ -1,7 +1,7 @@
 /*
-radix-4 DIF FFT twiddle coefficient calculator
+FFT twiddle coefficient calculator
 
-TO RUN: ./<executable> <# samples>
+TO RUN: ./<executable> <# samples> <integer radix>
 
 CREATED BY: James C. Norris
 */
@@ -14,13 +14,14 @@ CREATED BY: James C. Norris
 
 int main(int argc, char* argv[]) {
 	int N = atoi(argv[1]);
+	int radix = atoi(argv[2]);
 	
-	printf("...\nFinding twiddle coefficients for:\nSAMPLES(N)=%i\n...\n", N);
+	printf("...\nFinding twiddle coefficients for:\nRADIX=%i\nSAMPLES(N)=%i\n...\n", radix, N);
 	
 	for (double k = 0; k < N; k++) {
 		for (double n = 0; n < N; n++) {
 			
-			double phase = 2 * PI * (k * n) / N;
+			double phase = 2 * PI * (k * n) / radix;
 			
 			int real = (int) cos(phase);
 			int imag = (int) -sin(phase);

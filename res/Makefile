@@ -9,4 +9,4 @@ radix_4_DIF:
 	./r4dif_fft_twiddle_calc.exe $(WIDTH)
 
 clean:
-	rm -rf r2dit_fft_twiddle_calc.exe
+	rm -rf r2dit_fft_twiddle_calc.exe r4dif_fft_twiddle_calc.exe

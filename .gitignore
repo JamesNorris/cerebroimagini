@@ -1,3 +1,6 @@
+# executables
+*.exe
+
 # Quartus generated directories
 db
 incremental_db

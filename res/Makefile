@@ -1,4 +1,4 @@
-WIDTH=64 # samples used in fft
+WIDTH=32 # samples used in fft
 
 radix_2_DIT:
 	gcc r2dit_fft_twiddle_calc.c -o r2dit_fft_twiddle_calc.exe

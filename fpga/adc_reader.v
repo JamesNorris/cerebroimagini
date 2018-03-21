@@ -1,27 +1,27 @@
-module collect(//collect bits from the ADC into a 4-bit register
+module read(//collect bits from the ADC into a 12-bit register
 	input clk,
 	input in,//input bit
-	output[0:3] out,
+	output[0:11] out,
 	output rdy
 );
 
-reg [0:3] buffer;
-reg [0:2] count;
+reg[0:11] buffer;
+
+reg[0:3] count = 4'b0000;
 
 always @(posedge clk) begin
-	if (count == 4) count <= 0;//reset counter
+	if (count == 4'b1100) begin 
+		count <= 4'b0000;//reset counter (12->0)
+	end
 	
 	//shift in new bit
-	buffer[3] <= buffer[2];
-	buffer[2] <= buffer[1];
-	buffer[1] <= buffer[0];
-	buffer[0] <= in;
+	buffer <= (buffer << 1) | in;
 	
 	//increment count
-	count <= count + 1;
+	count <= count + 4'b0001;
 end
 
 assign out = buffer;
-assign rdy = count == 4;
+assign rdy = (count == 4'b1100);
 	
 endmodule

@@ -1,7 +1,7 @@
 /*
 sine wave values generator
 
-TO RUN: ./<executable> <# samples> <frequency (float prec.)> <# bits per sample 8/16/32/64> <amplitude>
+TO RUN: ./<executable> <# samples (int)> <frequency (float)> <# bits per sample (int, 32 max)> <amplitude (int)>
 
 CREATED BY: James C. Norris
 
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
 	int buffer[N];//create buffer of N samples
 	
 	for (int i = 0; i < N; i++) {
-		buffer[i] = (int) (sin((2 * PI * i) / freq) * A);
+		buffer[i] = (int) (sin(2 * PI * i * freq) * A);
 	}
 	
 	int mask = 0;

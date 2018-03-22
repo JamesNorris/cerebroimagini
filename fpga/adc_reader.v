@@ -1,27 +1,35 @@
+//IMPORTANT VARIABLES
+`define ADC_DATLEN 12
+`define ADC_DATLEN_LOG2 3
+//`define FFT_VLEN 16
+//`define FFT_VLEN_LOG2 4
+//`define FFT_RVAL_BMASK 24'h000FFF
+//
+
 module read(//collect bits from the ADC into a 12-bit register
 	input clk,
 	input in,//input bit
-	output[0:11] out,
+	output[0:`ADC_DATLEN-1] out,
 	output rdy
 );
 
-reg[0:11] buffer;
+reg[0:`ADC_DATLEN-1] buffer;
 
-reg[0:3] count = 4'b0000;
+reg[0:`ADC_DATLEN_LOG2] count = 0;
 
 always @(posedge clk) begin
-	if (count == 4'b1100) begin 
-		count <= 4'b0000;//reset counter (12->0)
+	if (count == `ADC_DATLEN) begin 
+		count <= 0;//reset counter (12->0)
 	end
 	
 	//shift in new bit
-	buffer <= (buffer << 1) | in;
+	buffer <= ((buffer << 1) | in);
 	
 	//increment count
-	count <= count + 4'b0001;
+	count <= count + 1;
 end
 
 assign out = buffer;
-assign rdy = (count == 4'b1100);
+assign rdy = (count == `ADC_DATLEN);
 	
 endmodule

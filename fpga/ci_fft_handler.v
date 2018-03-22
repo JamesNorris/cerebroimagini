@@ -1,8 +1,5 @@
 //IMPORTANT VARIABLES
 `define ADC_DATLEN 12
-//`define ADC_DATLEN_LOG2 3
-//`define FFT_VLEN 16
-//`define FFT_VLEN_LOG2 4
 `define FFT_RVAL_BMASK 24'h000FFF
 //
 
@@ -11,10 +8,11 @@ module handle_ci_fft(
 	//input reset_n,
 	input nd,//new data at input
 	input[0:`ADC_DATLEN-1] data,
+	
 	output[0:`ADC_DATLEN-1] real_out,//only real required by our application
 	
-	output wire out_nd,
-	output wire overflow
+	output out_nd,
+	output overflow
 );
 
 reg[0:(`ADC_DATLEN*2)-1] in_x;//multiply data by twiddle coeffs and store here

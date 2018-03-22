@@ -1,9 +1,7 @@
 //IMPORTANT VARIABLES
 `define ADC_DATLEN 12
-//`define ADC_DATLEN_LOG2 3
 `define FFT_VLEN 16
 `define FFT_VLEN_LOG2 4
-//`define FFT_RVAL_BMASK 24'h000FFF
 //
 
 module process(

@@ -1,16 +1,13 @@
 //IMPORTANT VARIABLES
 `define ADC_DATLEN 12
 `define ADC_DATLEN_LOG2 3
-//`define FFT_VLEN 16
-//`define FFT_VLEN_LOG2 4
-//`define FFT_RVAL_BMASK 24'h000FFF
 //
 
 module read(//collect bits from the ADC into a 12-bit register
-	input wire clk,
-	input wire in,//input bit
-	output wire[0:`ADC_DATLEN-1] out,
-	output wire rdy
+	input clk,
+	input in,//input bit
+	output[0:`ADC_DATLEN-1] out,
+	output rdy
 );
 
 reg[0:`ADC_DATLEN-1] buffer;

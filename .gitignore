@@ -7,7 +7,6 @@ db
 incremental_db
 output_files
 simulation
-testbench # create for required verilog tb files
 
 # Quartus generated files
 CerebroImagini_description.txt

@@ -12,6 +12,8 @@ FFT_VLEN_LOG2 		- Log2(FFT_VLEN), used as the reg size required to count up to F
 FFT_RVAL_BMASK 		- Bitmask which is ANDed with the FFT output to retrieve only the real value.
 				The bottom ADC_DATLEN bits should be high and all others low.
 
+Please note that the testbench files do not have easily-modifiable variables such as this.
+
 To change the twiddle factors you must change the generator parameters accordingly:
 	/fpga/fft_dit/ci_gtf.py
 

@@ -7,10 +7,10 @@
 //
 
 module read(//collect bits from the ADC into a 12-bit register
-	input clk,
-	input in,//input bit
-	output[0:`ADC_DATLEN-1] out,
-	output rdy
+	input wire clk,
+	input wire in,//input bit
+	output wire[0:`ADC_DATLEN-1] out,
+	output wire rdy
 );
 
 reg[0:`ADC_DATLEN-1] buffer;

@@ -5,13 +5,6 @@
 //
 
 module process
-#(
-	/*
-	These are the discrete times mapped to indices required by a *DIT* FFT of size FFT_VLEN
-	*/
-	parameter [0:`FFT_VLEN*4-1] shifts = {4'd0, 4'd8, 4'd6, 4'd10, 4'd4, 4'd12, 4'd2, 4'd14, 
-		4'd1, 4'd13, 4'd3, 4'd11, 4'd5, 4'd9, 4'd7, 4'd15}//MUST BE CHANGED MANUALLY
-)
 (
 	input clk,
 	input in,//input bit
@@ -23,77 +16,69 @@ module process
 wire[0:`ADC_DATLEN-1] ampl_t;
 wire rdy;
 
-read r0(clk, in, ampl_t, rdy);
+read r0(
+	clk, 
+	in, 
+	ampl_t, 
+	rdy
+);
 
-/* STORE EACH VALUE INTO ARRAY */
-reg[0:`FFT_VLEN*`ADC_DATLEN-1] array;
-reg[0:`FFT_VLEN_LOG2] count_in_x;
+//RDY IS NOW OUR INPUT CLOCK!!!
 
-initial count_in_x = 0;
+/* STORE EACH VALUE AS REQUIRED BY DECIMATION IN TIME */
+reg[0:`FFT_VLEN_LOG2] count_val;
+initial count_val = 0;
 
-always @(posedge rdy) begin
-	if (count_in_x < `FFT_VLEN) begin
-	
-		array = array | (ampl_t << (shifts[count_in_x] * `ADC_DATLEN)); 
-		count_in_x = count_in_x + 1;
-		
-	end else begin
-		//array = 0;//clear array
-		
-		/*
-		Locations within the array will be replaced over time.
-		We can only take the values we are prepared for. As a result,
-		we are going to miss some data while we wait for results from
-		the FFT.
-		*/
-		
-		count_in_x = 0;
-	end
-end
+wire[0:`ADC_DATLEN-1] store_x;
+
+dit_store cont0(
+	rdy,
+	ampl_t,
+	rdy,//update the output every time we input
+	count_val,//the index of the value we want (sequential)
+	store_x//output of the store
+);
 
 /* PERFORM radix-2 DECIMATION-IN-TIME FFT */
-reg[0:`FFT_VLEN_LOG2] count_val;
-reg[0:`FFT_VLEN_LOG2] count_read;
-
-reg[0:(`ADC_DATLEN*2)-1] in_x;
-
+reg[0:`ADC_DATLEN*2-1] in_x;//24 bits!
 reg in_nd;
+
+wire[0:`ADC_DATLEN*2-1] out_x;
+wire out_nd;
+
+reg out_nd_prev;
+
+initial in_x = 0;
 initial in_nd = 1;
 
-wire[0:`ADC_DATLEN-1] empty;
-assign empty = /*ADC_DATLEN*/12'b000000000000;//SET MANUALLY
-
-//get our next value
-reg[0:`FFT_VLEN*`ADC_DATLEN-1] array_copy;
-
 always @(negedge rdy) begin
-	if ((count_val < `FFT_VLEN) & in_nd) begin
-		array_copy = array >> (count_val*`ADC_DATLEN);
-		in_x = {empty, array_copy[0:`ADC_DATLEN-1]};
+	if (out_nd & !out_nd_prev) begin//posedge out_nd
+		count_val = 0;//restart counter
+	end
+	
+	if (!out_nd & out_nd_prev) begin//negegde out_nd
+		in_nd = 1;
+		count_val = 0;//restart counter
+	end
+	
+	out_nd_prev = out_nd;
+	
+	if (count_val < `FFT_VLEN) begin
+		if (in_nd) begin
+			in_x = store_x;
+		end
+		
 		count_val = count_val + 1;
 	end else begin
 		count_val = 0;
-		if (count_read < `FFT_VLEN) begin
-			if (out_nd) begin
-				count_read = count_read + 1;
-			end
-			in_nd = 0;
-		end else begin
-			in_nd = 1;
-			count_read = 0;
-		end
-		//in_nd = 0;
+		in_nd = 0;
 	end
-	//in_nd = 1;
 end
 
-wire[0:(`ADC_DATLEN*2)-1] out_x;
-wire out_nd;
-wire overflow;
+wire overflow;//TODO handle
 
-//perform fft
 dit fft0(
-	clk,
+	rdy,
 	1,//reset_n (active low)
 	in_x,
 	in_nd,

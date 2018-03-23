@@ -8,8 +8,6 @@
 // as X_WDTH.
 // TF_WDTH must be the same as X_WDTH
 
-//CEREBROIMAGINI - slight modifications for this project
-
 module dit
    #(
      // Length of FFT vector.
@@ -44,11 +42,6 @@ module dit
 
    `define MSG_DEBUG(g) if(DEBUGMODE) $display("DEBUG : %m:", g)
    `define MSG_ERROR(g) $display("ERROR : %m:", g)
-	`define MSG_WOUT(w) if (DEBUGMODE) $display("%24b", w)
-	
-	always @(posedge in_nd) begin
-		`MSG_WOUT(in_x);
-	end
    
    /******************************/
    /* Define global data buffers */

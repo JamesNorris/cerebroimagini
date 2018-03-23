@@ -28,7 +28,7 @@ def make_twiddle_factor_file(N, tf_width, template_fn='twiddlefactors_N.v.t', ou
     f_out = open(output_fn, 'w')
     Nlog2 = int(math.log(N, 2))
     tfs = []
-    for i in range(0, N/2):
+    for i in range(0, int(N/2)):
         tf = {}
         tf['i'] = i
         v = cmath.exp(-i*2j*cmath.pi/N)

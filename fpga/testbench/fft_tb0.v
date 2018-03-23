@@ -27,7 +27,11 @@ initial begin
 	count = 0;//skip first 0, we already provided one
 end
 
-always @(posedge clk) begin
+always @(negedge clk) begin
+	if (out_nd) begin
+		$display("bin = %2h, out = %6h", count, out_x);
+	end
+	
 	if (count < 16) begin
 		count = count + 1;
 	end else begin
@@ -36,20 +40,20 @@ always @(posedge clk) begin
 	
 	case(count)
 		0: in_x = 0;
-		1: in_x = 38;
+		1: in_x = 7;
 		2: in_x = 70;
-		3: in_x = 92;
+		3: in_x = 1;
 		4: in_x = 100;
-		5: in_x = 92;
+		5: in_x = 32;
 		6: in_x = 70;
-		7: in_x = 38;
+		7: in_x = 43;
 		8: in_x = 0;
-		9: in_x = -38;
+		9: in_x = 4;
 		10: in_x = -70;
 		11: in_x = -92;
-		12: in_x = -100;
+		12: in_x = 87;
 		13: in_x = -92;
-		14: in_x = -70;
+		14: in_x = 64;
 		15: in_x = -38;
 		default:
 			begin
@@ -58,15 +62,19 @@ always @(posedge clk) begin
 	endcase
 end
 
+always @(posedge out_nd) begin
+	count = 0;
+end
+
 always @(negedge out_nd) begin
 	in_nd = 1;
 	count = 0;
 end
 
 always begin
-	#5 clk = !clk;
+	#10 clk = !clk;
 	
-	$monitor("in = %6h, out = %6h", in_x, out_x);
+	//$monitor("out = %6h", out_x);
 end
 
 endmodule

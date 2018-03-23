@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
 		
 		int masked = buf & mask;
 		
-		printf("%i\n", (masked * sign));
+		printf("%i: in_x = %i;\n", i, (masked * sign));
 	}
 	
 	return 0;

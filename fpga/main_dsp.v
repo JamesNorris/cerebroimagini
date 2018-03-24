@@ -30,13 +30,15 @@ reg[0:`FFT_VLEN_LOG2] count_val;
 initial count_val = 0;
 
 wire[0:`ADC_DATLEN-1] store_x;
+wire filled;
 
 dit_store cont0(
 	rdy,
 	ampl_t,
 	rdy,//update the output every time we input
 	count_val,//the index of the value we want (sequential)
-	store_x//output of the store
+	store_x,//output of the store
+	filled
 );
 
 /* PERFORM radix-2 DECIMATION-IN-TIME FFT */
@@ -51,7 +53,7 @@ reg out_nd_prev;
 initial in_x = 0;
 initial in_nd = 1;
 
-always @(negedge rdy) begin
+always @(negedge rdy & filled) begin
 	if (out_nd & !out_nd_prev) begin//posedge out_nd
 		count_val = 0;//restart counter
 	end

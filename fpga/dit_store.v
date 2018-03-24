@@ -10,10 +10,13 @@ module dit_store(
 	input[0:`ADC_DATLEN-1] in,
 	input get,
 	input[0:`FFT_VLEN_LOG2] choose,
-	output[0:`ADC_DATLEN-1] out_w
+	output[0:`ADC_DATLEN-1] out_w,
+	output full_w
 );
 
 reg[0:`ADC_DATLEN-1] out;
+reg full;
+initial full = 0;
 
 reg[0:`FFT_VLEN_LOG2] count_in_x;
 initial count_in_x = 0;
@@ -55,7 +58,7 @@ always @(posedge rdy) begin
 			12: x_5 = in;
 			13: x_9 = in;
 			14: x_7 = in;
-			15: x_15 = in;
+			15: begin x_15 = in; full = 1; end
 			
 			default: x_0 = in;
 
@@ -101,5 +104,6 @@ always @(posedge get) begin
 end
 
 assign out_w = out;
+assign full_w = full;
 
 endmodule

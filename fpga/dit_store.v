@@ -45,24 +45,25 @@ always @(posedge rdy) begin
 			
 			0: x_0 = in;
 			1: x_8 = in;
-			2: x_6 = in;
-			3: x_10 = in;
-			4: x_4 = in;
-			5: x_12 = in;
-			6: x_2 = in;
+			2: x_4 = in;
+			3: x_12 = in;
+			4: x_2 = in;
+			5: x_10 = in;
+			6: x_6 = in;
 			7: x_14 = in;
 			8: x_1 = in;
-			9: x_13 = in;
-			10: x_3 = in;
-			11: x_11 = in;
-			12: x_5 = in;
-			13: x_9 = in;
+			9: x_9 = in;
+			10: x_5 = in;
+			11: x_13 = in;
+			12: x_3 = in;
+			13: x_11 = in;
 			14: x_7 = in;
 			15: begin x_15 = in; full = 1; end
 			
 			default: x_0 = in;
 
 		endcase
+		
 		count_in_x = count_in_x + 1;
 		
 	end else begin

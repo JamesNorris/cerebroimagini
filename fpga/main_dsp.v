@@ -34,7 +34,7 @@ wire filled;
 
 dit_store cont0(
 	rdy,
-	ampl_t,
+	(ampl_t >> 1),
 	rdy,//update the output every time we input
 	count_val,//the index of the value we want (sequential)
 	store_x,//output of the store
@@ -48,29 +48,44 @@ reg in_nd;
 wire[0:`ADC_DATLEN*2-1] out_x;
 wire out_nd;
 
+reg in_nd_later;
+reg filled_prev;
 reg out_nd_prev;
 
-initial in_x = 0;
-initial in_nd = 1;
+initial filled_prev = 0;
 
-always @(negedge rdy & filled) begin
+initial in_x = 0;
+initial in_nd = 0;
+
+always @(posedge rdy) begin
+	if (!filled_prev & filled) begin
+		filled_prev <= 1;
+		//count_val = 0;
+		in_nd = 1;
+	end
+	
 	if (out_nd & !out_nd_prev) begin//posedge out_nd
-		count_val = 0;//restart counter
+		//count_val = 0;//restart counter
 	end
 	
 	if (!out_nd & out_nd_prev) begin//negegde out_nd
 		in_nd = 1;
-		count_val = 0;//restart counter
+		//count_val = 0;//restart counter
 	end
 	
-	out_nd_prev = out_nd;
+	out_nd_prev <= out_nd;
 	
-	if (count_val < `FFT_VLEN) begin
-		if (in_nd) begin
-			in_x = store_x;
-		end
-		
+	if ((count_val < `FFT_VLEN) & in_nd) begin
+		in_x = store_x;
+			
 		count_val = count_val + 1;
+		
+		/*if (count_val == `FFT_VLEN-1) begin
+			count_val = 0;
+		end else begin
+			count_val = count_val + 1;
+		end
+		*/
 	end else begin
 		count_val = 0;
 		in_nd = 0;

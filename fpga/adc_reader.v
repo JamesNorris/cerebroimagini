@@ -10,13 +10,20 @@ module read(//collect bits from the ADC into a 12-bit register
 	output rdy
 );
 
+reg init = 1;//initial 0 bit
+
+reg rdy_r = 0;
+
 reg[0:`ADC_DATLEN-1] buffer;
 
 reg[0:`ADC_DATLEN_LOG2] count = 0;
 
-always @(posedge clk) begin
-	if (count == `ADC_DATLEN) begin 
+always @(negedge clk) begin
+	if (count == `ADC_DATLEN) begin
+		rdy_r = 1;
 		count = 0;//reset counter (12->0)
+	end else begin
+		rdy_r = 0;
 	end
 	
 	//shift in new bit
@@ -24,9 +31,14 @@ always @(posedge clk) begin
 	
 	//increment count
 	count = count + 1;
+	
+	if (init) begin
+		count = 0;//skip initial 0 bit
+		init = 0;
+	end
 end
 
 assign out = buffer;
-assign rdy = (count == `ADC_DATLEN);
+assign rdy = rdy_r;
 	
 endmodule

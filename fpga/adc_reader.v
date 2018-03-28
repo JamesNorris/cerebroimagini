@@ -1,27 +1,42 @@
-//IMPORTANT VARIABLES
-`define ADC_DATLEN 12
-`define ADC_DATLEN_LOG2 3
-//
+module read
+#(
 
-module read(//collect bits from the ADC into a 12-bit register
+	//we may need to skip the initial bit
+	parameter skipbit = 1,
+	
+	//the data size coming from the ADC
+	parameter datlen = 12,
+	
+	//self-explanitory, we need this for counting
+	parameter datlen_log2 = 3
+	
+)(
+
 	input clk,
-	input in,//input bit
-	output[0:`ADC_DATLEN-1] out,
+	
+	//the input bit
+	input in,
+	
+	//output after datlen bits, may be an x value beforehand
+	output[0:datlen-1] out,
+	
+	//set high only when we hit datlen bits, then back low
 	output rdy
+	
 );
 
-reg init = 1;//initial 0 bit
+reg init = skipbit;
 
 reg rdy_r = 0;
 
-reg[0:`ADC_DATLEN-1] buffer;
+reg[0:datlen-1] buffer;
 
-reg[0:`ADC_DATLEN_LOG2] count = 0;
+reg[0:datlen_log2] count = 0;
 
 always @(negedge clk) begin
-	if (count == `ADC_DATLEN) begin
+	if (count == datlen) begin
 		rdy_r = 1;
-		count = 0;//reset counter (12->0)
+		count = 0;//reset counter
 	end else begin
 		rdy_r = 0;
 	end

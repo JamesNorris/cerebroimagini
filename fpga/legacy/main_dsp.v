@@ -35,7 +35,7 @@ wire filled;
 dit_store cont0(
 	rdy,
 	(ampl_t >> 1),
-	rdy,//update the output every time we input
+	clk,//update the output every time we input
 	count_val,//the index of the value we want (sequential)
 	store_x,//output of the store
 	filled
@@ -48,7 +48,6 @@ reg in_nd;
 wire[0:`ADC_DATLEN*2-1] out_x;
 wire out_nd;
 
-reg in_nd_later;
 reg filled_prev;
 reg out_nd_prev;
 
@@ -95,9 +94,9 @@ end
 wire overflow;//TODO handle
 
 dit fft0(
-	rdy,
+	(!rdy),
 	1,//reset_n (active low)
-	in_x,
+	(in_x << 12),
 	in_nd,
 	out_x,
 	out_nd,//new data in fft_out
@@ -107,8 +106,8 @@ dit fft0(
 //TODO filter, take maximums, send data to uController
 
 //temp (to show incomplete diagram in tech map view)
-assign max730 = out_x;
-assign max850 = out_x;
+assign max730 = out_x >> 12;
+assign max850 = out_x >> 12;
 //end temp
 
 endmodule

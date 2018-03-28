@@ -11,9 +11,9 @@ wire overflow;
 dit fft0(
 	clk,
 	1,/*reset_n*/
-	in_x,
+	(in_x << 12),//real is 12 MSB's
 	in_nd,
-	out_x,
+	out_x,//bring real back to 12 LSB's
 	out_nd,//ready to read
 	overflow//if the fft can't keep up with the new data
 );
@@ -22,20 +22,14 @@ reg[0:5] count;//counts up to 16
 
 initial begin
 	clk = 0;
-	in_nd = 1;
+	in_nd = 0;
 	in_x = 0;
-	count = 0;//skip first 0, we already provided one
+	count = 0;
 end
 
-always @(negedge clk) begin
+always @(posedge clk) begin
 	if (out_nd) begin
 		$display("bin = %2h, out = %6h", count, out_x);
-	end
-	
-	if (count < 16) begin
-		count = count + 1;
-	end else begin
-		in_nd = 0;
 	end
 	
 	case(count)
@@ -60,6 +54,12 @@ always @(negedge clk) begin
 				in_x = 0;
 			end
 	endcase
+	
+	if (count < 15) begin//16-1
+		count = count + 1;
+	end else begin
+		in_nd = 0;
+	end
 end
 
 always @(posedge out_nd) begin

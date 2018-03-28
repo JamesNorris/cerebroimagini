@@ -1,51 +1,63 @@
-//IMPORTANT VARIABLES
-`define ADC_DATLEN 12
-`define FFT_VLEN 16
-`define FFT_VLEN_LOG2 4
-//
-
 module process
-(
+#(
+	
+	//length of the input data read from the ADC
+	parameter datlen = 12,
+	
+	//vector length N of the FFT (# bins)
+	parameter vlen = 16,
+	
+	//log base 2 of vlen used for counting
+	parameter vlen_log2 = 4
+	
+)(
+
 	input clk,
+	
 	input in,//input bit
-	output[0:`ADC_DATLEN-1] max730,
-	output[0:`ADC_DATLEN-1] max850
+	
+	output[0:datlen-1] max730,
+	
+	output[0:datlen-1] max850
+	
 );
 
 /* COLLECT BITS FROM ADC */
-wire[0:`ADC_DATLEN-1] ampl_t;
+wire[0:datlen-1] ampl_t;
 wire rdy;
 
 read r0(
+
 	clk, 
 	in, 
 	ampl_t, 
 	rdy
+	
 );
 
-//RDY IS NOW OUR INPUT CLOCK!!!
-
 /* STORE EACH VALUE AS REQUIRED BY DECIMATION IN TIME */
-reg[0:`FFT_VLEN_LOG2] count_val;
+reg[0:vlen_log2] count_val;
 initial count_val = 0;
 
-wire[0:`ADC_DATLEN-1] store_x;
+wire[0:datlen-1] store_x;
 wire filled;
 
 dit_store cont0(
+
 	rdy,
-	(ampl_t >> 1),
+	(ampl_t >> 1),//TODO remove the shift, it breaks large numbers!!!
 	clk,//update the output every time we input
 	count_val,//the index of the value we want (sequential)
 	store_x,//output of the store
 	filled
+	
 );
 
 /* PERFORM radix-2 DECIMATION-IN-TIME FFT */
-reg[0:`ADC_DATLEN*2-1] in_x;//24 bits!
+reg[0:datlen*2-1] in_x;//24 bits!
 reg in_nd;
 
-wire[0:`ADC_DATLEN*2-1] out_x;
+wire[0:datlen*2-1] out_x;
 wire out_nd;
 
 reg filled_prev;
@@ -55,6 +67,20 @@ initial filled_prev = 0;
 
 initial in_x = 0;
 initial in_nd = 0;
+
+wire overflow;//TODO handle
+
+dit fft0(
+
+	rdy,
+	1,//reset_n (active low)
+	(in_x << datlen),
+	in_nd,
+	out_x,
+	out_nd,//new data in fft_out
+	overflow//handle, fft can't keep up
+	
+);
 
 always @(posedge rdy) begin
 	if (!filled_prev & filled) begin
@@ -74,40 +100,26 @@ always @(posedge rdy) begin
 	
 	out_nd_prev <= out_nd;
 	
-	if ((count_val < `FFT_VLEN) & in_nd) begin
+	if (count_val < vlen) begin
 		in_x = store_x;
 			
-		count_val = count_val + 1;
+		if (in_nd) begin
+			//$display("count: %2F - input: %3F", count_val, in_x);
 		
-		/*if (count_val == `FFT_VLEN-1) begin
-			count_val = 0;
-		end else begin
 			count_val = count_val + 1;
 		end
-		*/
 	end else begin
 		count_val = 0;
 		in_nd = 0;
 	end
+	
 end
-
-wire overflow;//TODO handle
-
-dit fft0(
-	(!rdy),
-	1,//reset_n (active low)
-	(in_x << 12),
-	in_nd,
-	out_x,
-	out_nd,//new data in fft_out
-	overflow//handle, fft can't keep up
-);
 
 //TODO filter, take maximums, send data to uController
 
 //temp (to show incomplete diagram in tech map view)
-assign max730 = out_x >> 12;
-assign max850 = out_x >> 12;
+assign max730 = out_x >> datlen;
+assign max850 = out_x >> datlen;
 //end temp
 
 endmodule

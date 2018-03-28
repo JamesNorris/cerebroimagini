@@ -1,92 +1,95 @@
-//IMPORTANT VARIABLES
-`define ADC_DATLEN 12
-`define ADC_DATLEN_LOG2 3
-//
-
-module dsp
+module dsp 
 #(
 
-	//the delay between a sensor reading and the ADC converter reading
-	parameter delay = 100,
-
-	//period t between each pulse in clock cycles
-	parameter t = 64,
-	
-	//log base 2 of t used for counting
-	parameter t_log2 = 3,
-	
-	//the signal duration in clock cycles
-	parameter d = 64,
-	
-	//log base 2 of d used for counting
-	parameter d_log2 = 3,
-	
-	//the data size coming from the ADC
+	//length of the input data read from the ADC
 	parameter datlen = 12,
 	
-	//log base 2 of datlen used for counting
-	parameter datlen_log2 = 3,
+	//vector length N of the FFT (# bins)
+	parameter vlen = 32,
 	
-	//the number of values to average
-	parameter avg_n = 64,
+	//log base 2 of vlen used for counting
+	parameter vlen_log2 = 5,
 	
-	//log base 2 of avg_n used for indexing
-	parameter avg_n_log2 = 6
-
+	//the low cutoff frequency for modulation A's band-pass filter
+	parameter freq_a_low = 100,
+	
+	//the high cutoff frequency for modulation A's band-pass filter
+	parameter freq_a_high = 200,
+	
+	//the low cutoff frequency for modulation B's band-pass filter
+	parameter freq_b_low = 500,
+	
+	//the high cutoff frequency for modulation B's band-pass filter
+	parameter freq_b_high = 600
+	
 )(
-	
-	//this FPGA's clock
+
+	//clock
 	input clk,
 	
-	//the sensor trigger line
-	input trigger,
-	
-	//single input bit from ADC
+	//input bit from the ADC
 	input in,
 	
-	//*average* voltage of pulses during avg_n data entries
-	output[0:datlen-1] avg
-
+	//peak of modulation A
+	output[0:datlen-1] freq_a,
+	
+	//peak of modulation B
+	output[0:datlen-1] freq_b
+	
 );
 
-//TODO account for delay by masking clk until after (trigger + delay)
+/* COLLECT BITS FROM ADC */
+wire[0:datlen-1] ampl_t;
+wire rdy;
 
-/* READ ADC */
-wire[0:datlen-1] adc_out;
-wire adc_rdy;
+read r0(
 
-read #(
+	clk, 
+	in, 
+	ampl_t, 
+	rdy
 	
+);
+
+/* DECIMATION IN TIME FFT */
+reg[0:datlen*2-1] ampl_t_in_x = 0;
+reg in_nd = 0;
+
+wire[0:datlen*2-1] ampl_f;
+wire out_nd;
+wire overflow;
+
+dit d0(
+
+	rdy,
 	1,
-	datlen,
-	datlen_log2
-	
-)
-r0(
-
-	.clk(clk),
-	.in(in),
-	.out(adc_out),
-	.rdy(adc_rdy)
+	ampl_t_in_x,
+	in_nd,
+	ampl_f,
+	out_nd,
+	overflow
 	
 );
 
-/* SIGNAL AVERAGING */
-sig_avg #(
+/* DRIVER FOR FFT */
+reg[0:vlen_log2-1] vcount = -1;
 
-	datlen,
-	avg_n,
-	avg_n_log2
-	
-)
-a0(
-	
-	.clk(adc_rdy),
-	.val(adc_out),
-	.avg(avg)//output
-	
-);
+reg[0:datlen-1] zeros = 0;
 
-//OUTPUT METHOD? UART?
+always @(posedge rdy) begin
+	ampl_t_in_x = {zeros, ampl_t};
+	
+	if (!out_nd && vcount <= vlen-1) begin
+		in_nd = 1;
+		
+		vcount = vcount + 1;
+	end else begin
+		in_nd = 0;
+		
+		vcount = 0;
+	end
+end
+
+assign freq_a = ampl_f;//TEMP
 
 endmodule

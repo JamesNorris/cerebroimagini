@@ -18,7 +18,7 @@ dit fft0(
 	overflow//if the fft can't keep up with the new data
 );
 
-reg[0:5] count;//counts up to 16
+reg[0:5] count;//counts up
 
 initial begin
 	clk = 0;
@@ -33,22 +33,22 @@ always @(posedge clk) begin
 	end
 	
 	case(count)
-		0: in_x = 0;
-		1: in_x = 7;
-		2: in_x = 70;
-		3: in_x = 1;
-		4: in_x = 100;
-		5: in_x = 32;
-		6: in_x = 70;
-		7: in_x = 43;
-		8: in_x = 0;
-		9: in_x = 4;
-		10: in_x = -70;
-		11: in_x = -92;
-		12: in_x = 87;
-		13: in_x = -92;
-		14: in_x = 64;
-		15: in_x = -38;
+		0: in_x = 50;
+		1: in_x = 115;
+		2: in_x = 43;
+		3: in_x = 20;
+		4: in_x = 2;
+		5: in_x = 13;
+		6: in_x = 115;
+		7: in_x = 20;
+		8: in_x = 200;
+		9: in_x = 46;
+		10: in_x = 80;
+		11: in_x = 92;
+		12: in_x = 73;
+		13: in_x = 62;
+		14: in_x = 900;
+		15: in_x = 1;
 		default:
 			begin
 				in_x = 0;
@@ -78,3 +78,41 @@ always begin
 end
 
 endmodule
+
+/* VALUES IN ORDER
+50
+115
+43
+20
+2
+13
+115
+20
+200
+46
+80
+92
+73
+62
+900
+1
+*/
+
+/* VALUES IN EVEN/ODD DIT ORDER
+50
+200
+2
+73
+43
+80
+115
+900
+115
+46
+13
+62
+20
+92
+20
+1
+*/

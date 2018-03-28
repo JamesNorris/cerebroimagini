@@ -6,7 +6,7 @@ reg in;
 wire[0:11] max730;
 wire[0:11] max850;
 
-process proc0(
+dsp proc0(
 	clk,
 	in,
 	max730,
@@ -14,7 +14,7 @@ process proc0(
 );
 
 reg[0:11] cur_val = 0;
-reg[0:5] count_val = 0;
+reg[0:6] count_val = 0;
 reg[0:4] count_bit = 0;
 
 initial begin
@@ -30,13 +30,17 @@ always @(posedge clk) begin
 		2: cur_val = 43;
 		3: cur_val = 20;
 		4: cur_val = 2;
-		5: cur_val = -13;
-		6: cur_val = -115;
+		5: cur_val = 13;
+		6: cur_val = 115;
 		7: cur_val = 20;
 		8: cur_val = 200;
 		9: cur_val = 46;
 		10: cur_val = 80;
-		11: cur_val = -92;
+		11: cur_val = 92;
+		12: cur_val = 73;
+		13: cur_val = 62;
+		14: cur_val = 900;
+		15: cur_val = 1;
 		default: begin cur_val = 0; end
 	
 	endcase
@@ -50,7 +54,7 @@ always @(posedge clk) begin
 		
 		count_val = count_val + 1;
 		
-		if (count_val == 16) begin
+		if (count_val == 32) begin
 			count_val = 0;
 		end
 	end
@@ -61,3 +65,41 @@ always begin
 end
 
 endmodule
+
+/* VALUES IN ORDER
+50
+115
+43
+20
+2
+13
+115
+20
+200
+46
+80
+92
+73
+62
+900
+1
+*/
+
+/* VALUES IN EVEN/ODD DIT ORDER
+50
+200
+2
+73
+43
+80
+115
+900
+115
+46
+13
+62
+20
+92
+20
+1
+*/

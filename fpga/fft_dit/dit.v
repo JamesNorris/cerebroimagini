@@ -11,9 +11,9 @@
 module dit
    #(
      // Length of FFT vector.
-     parameter N = 16,
+     parameter N = 32,
      // Base two log of N
-     parameter NLOG2 = 4,
+     parameter NLOG2 = 5,
      // Number of bits in vector values (double this value for a complex number).
      parameter X_WDTH = 12,
       // Number of bits in twiddle factor values. (must be equal to X_WDTH at the moment)
@@ -42,6 +42,12 @@ module dit
 
    `define MSG_DEBUG(g) if(DEBUGMODE) $display("DEBUG : %m:", g)
    `define MSG_ERROR(g) $display("ERROR : %m:", g)
+	
+	always @(posedge clk) begin
+		if (in_nd) begin
+			$display("input: %6h", in_x);
+		end
+	end
    
    /******************************/
    /* Define global data buffers */

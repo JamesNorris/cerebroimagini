@@ -16,8 +16,8 @@ FPGA:
 
 There are a few notable modifications which can affect the speed/accuracy tradeoff:
 
-1) The length of the radix-2 DIT FFT vector
-	- Increasing the length provides higher accuracy but also increases the initial buffer time
+1) The length of the radix-2^N DIT FFT vector
+	- Increasing the length provides higher frequency resolution but also increases the buffer times
 	- Increasing the length takes a higher number of logic elements on the FPGA
 
 ...

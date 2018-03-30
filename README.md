@@ -5,12 +5,15 @@ of brain mapping.
 
 <h3>Usage</h3>
 
+TODO
+
 <h3>FPGA</h3>
 
 <ol>
 <li> Download Intel Quartus Prime Lite (QPL) edition
 <li> Using QPL, open:	/fpga/CerebroImagini.qpf
 </ol>
+
 ...compile, JTAG programmer
 
 There are a few notable modifications which can affect the speed/accuracy tradeoff:
@@ -25,7 +28,8 @@ There are a few notable modifications which can affect the speed/accuracy tradeo
 ...
 
 <h3>Credits</h3>
-
-<b>DIT FFT:</b> https://github.com/benreynwar/fft-dit-fpga
+<ul>
+<li><b>DIT FFT:</b> https://github.com/benreynwar/fft-dit-fpga
+</ul>
 
 ...incomplete

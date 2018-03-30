@@ -12,7 +12,7 @@ TODO
 <h3>Compilation</h3>
 TODO
 
-<h3>Uploading to the Processor</h3>
+<h3>Uploading to the FPGA</h3>
 TODO
 
 <h3>And more...</h3>

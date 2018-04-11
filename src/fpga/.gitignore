@@ -1,0 +1,28 @@
+# executables
+*.exe
+*.pyc
+
+# C output
+*.o
+
+# Quartus generated directories
+db
+incremental_db
+output_files
+simulation
+
+# Quartus generated files
+CerebroImagini_description.txt
+*.cmp
+*.hex
+*.html
+*.rpt
+
+# TEST THESE:
+.qsys_edit
+*.sopcinfo
+*.xml
+*.bsf
+*.ppf
+*.debuginfo
+*.bak

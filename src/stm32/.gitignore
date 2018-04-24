@@ -1,0 +1,24 @@
+#executables
+*.exe
+
+#web files
+*.html
+*.css
+*.url
+
+#documentation (non-.txt)
+*.pdf
+
+#images
+*.png
+*.jpg
+
+#videos
+*.avi
+*.emf
+
+#audio files
+*.wav
+
+#spreadsheets
+*.xls

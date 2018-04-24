@@ -14,14 +14,14 @@
 //definitions
 #define PI 3.141592
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 400
+#define SCREEN_WIDTH 1000
+#define SCREEN_HEIGHT 200
 #define WINDOW_TITLE "CerebroImagini Viewer"
 
 #define LINES 3
 
 #define POINT_WIDTH 3
-#define GRAPH_X_AXIS_POS 200
+#define GRAPH_X_AXIS_POS 100
 
 #define AX_FONT_SIZE 16
 #define AX_FONT_HEIGHT 12
@@ -31,13 +31,13 @@
 #define V_AX_INCREMENT 1
 
 #define H_AX_MAX -1//-1 for scrolling
-#define H_AX_INCREMENT 200
-#define H_AX_RESOLUTION 20
+#define H_AX_LABELS 3
+#define H_AX_INCREMENT 500
+#define H_AX_RESOLUTION 1
 
 SDL_Window* wdw;
 SDL_Renderer* rend;
 SDL_Rect* canvas;
-SDL_Rect* point;
 SDL_Color* blk;
 TTF_Font* font;
 
@@ -103,21 +103,19 @@ void reset_graph(int pres) {
 	}
 
 	//horizontal (x) axis labels
-	int labels = SCREEN_WIDTH / H_AX_INCREMENT;
+	int label_dist = SCREEN_WIDTH / H_AX_LABELS;
 	
-	for (int i = 0; i < SCREEN_WIDTH; i += H_AX_INCREMENT) {
+	for (int i = 0; i < H_AX_LABELS; i++) {
 		int len = 5;//log10(abs(t));
 		
 		char label[len];
-		sprintf(label, "%5i", t - labels * H_AX_INCREMENT);
+		sprintf(label, "%5i", t - (H_AX_LABELS - i) * H_AX_INCREMENT);
 		
 		//printf("%i\n", i);
 		
-		draw_text(&label[0], len, i, GRAPH_X_AXIS_POS + 1 + AX_FONT_HEIGHT, AX_FONT_WIDTH * len, AX_FONT_HEIGHT);
+		draw_text(&label[0], len, label_dist * i, GRAPH_X_AXIS_POS + 1 + AX_FONT_HEIGHT, AX_FONT_WIDTH * len, AX_FONT_HEIGHT);
 		
-		SDL_RenderDrawLine(rend, i, 0, i, SCREEN_HEIGHT);
-		
-		labels--;
+		SDL_RenderDrawLine(rend, label_dist * i, 0, label_dist * i, SCREEN_HEIGHT);
 	}
 	
 	//current time display in top-right corner
@@ -142,7 +140,7 @@ void graph_arr(double* arr, int n, int r, int g, int b, int pres) {
 	if (pres) SDL_RenderPresent(rend);
 }
 
-double scale_y(double y) {
+double scale_y(double y) {//linear operation, works for any y value
 	return GRAPH_X_AXIS_POS - y * vratio;
 }
 
@@ -158,9 +156,10 @@ int exit_check() {
 	SDL_PollEvent(&evt);
 	switch (evt.type) {
 		case SDL_QUIT:
+			exit(0); return 1;
 		case SDL_APP_TERMINATING:
 		case SDL_APP_LOWMEMORY:
-			_exit(0); return 1;
+			_exit(0); return 1;//immediate termination w/o cleanup
 		default: break;//nothing
 	}
 	return 0;
@@ -187,12 +186,6 @@ int main(int argc, char* argv[]) {
 	canvas->w = SCREEN_WIDTH;
 	canvas->h = SCREEN_HEIGHT;
 	
-	point = malloc(sizeof(struct SDL_Rect));
-	point->x = 0;
-	point->y = 0;
-	point->w = POINT_WIDTH;
-	point->h = POINT_WIDTH;
-	
 	blk = malloc(sizeof(struct SDL_Color));
 	blk->r = 0;
 	blk->g = 0;
@@ -207,18 +200,16 @@ int main(int argc, char* argv[]) {
 	double blue[h_pts + 1];
 	double grn[h_pts + 1];
 	
-	double period = h_pts / PI;//arbitrary testing period for wave functions
+	double period = h_pts * 1.2 / PI;//arbitrary testing period for wave functions
 	
 	while(!exit_check()) {
 		usleep(2);//read every 2 microseconds
 		
 		t++;
 			
-		int loc = t < h_pts ? t : h_pts;
-			
-		shift_in_arr(&red[0], scale_y(sin(t / period)), loc);
-		shift_in_arr(&blue[0], scale_y(cos(t / period)), loc);
-		shift_in_arr(&grn[0], scale_y(tan(t / period)), loc);
+		shift_in_arr(&red[0], scale_y(sin(t / period)), h_pts);
+		shift_in_arr(&blue[0], scale_y(cos(t / period)), h_pts);
+		shift_in_arr(&grn[0], scale_y(tan(t / period)), h_pts);
 			
 		graph_arr(&red[0], h_pts, 255, 0, 0, 0);
 		graph_arr(&blue[0], h_pts, 0, 255, 0, 0);
@@ -231,7 +222,6 @@ int main(int argc, char* argv[]) {
 	SDL_DestroyRenderer(rend);
 	SDL_DestroyWindow(wdw);
 	free(canvas);
-	free(point);
 	free(blk);
 	
 	return 0;

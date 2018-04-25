@@ -1,3 +1,7 @@
+#since we must limit the repository size to 1GB max, only commit the compressed libraries
+/lib/SDL2-2.0.8
+/lib/SDL2_ttf-2.0.14
+
 #executables
 *.exe
 *.o

@@ -1,3 +1,6 @@
+#libraries
+/lib/STM32Cube_FW_F4_V1.21.0
+
 #executables
 *.exe
 
@@ -12,6 +15,7 @@
 #images
 *.png
 *.jpg
+*.bmp
 
 #videos
 *.avi
@@ -22,3 +26,25 @@
 
 #spreadsheets
 *.xls
+
+#compiled html
+*.chm
+
+#directories
+_htmresc/
+Documentation/
+Projects/
+Examples/
+STM32F4-Discovery/
+STM32F4xx_Nucleo_144/
+STM32F4xx_Nucleo/
+STM32F401-Discovery/
+STM32F413H-Discovery/
+STM32F429I-Discovery/
+STM324x9I_EVAL/
+STM324xG_EVAL/
+STM32412G-Discovery/
+STM32446E_EVAL/
+STM32469I_EVAL/
+STM32469I-Discovery/
+Utilities/PC_Software/

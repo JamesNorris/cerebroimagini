@@ -1,5 +1,5 @@
-#since we must limit the repository size to 1GB max, only commit the compressed library
-/STM32Cube_FW_F4_V1.21.0
+#libraries
+/lib/STM32Cube_FW_F4_V1.21.0
 
 #executables
 *.exe

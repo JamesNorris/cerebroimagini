@@ -1,2 +1,14 @@
+#executables
 *.exe
 *.o
+
+#images
+*.jpg
+*.png
+*.bmp
+
+#audio
+*.wav
+
+#directories
+docs/

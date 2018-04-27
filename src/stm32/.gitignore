@@ -1,50 +1,70 @@
-#libraries
-/lib/STM32Cube_FW_F4_V1.21.0
+# A .gitignore for Keil projects.
+# Taken from: https://github.com/mrshrdlu/gitignore-keil/blob/master/keil.gitignore
 
-#executables
-*.exe
+# User-specific uVision files
+*.opt
+*.uvopt
+*.uvoptx
+*.uvgui
+*.uvgui.*
+*.uvguix.*
 
-#web files
-*.html
-*.css
-*.url
+# Listing files
+*.cod
+*.htm
+*.i
+*.lst
+*.map
+*.m51
+*.m66
+*.scr  	# define exception below if needed
 
-#documentation (non-.txt)
-*.pdf
+# Object and HEX files
+*.axf
+*.b[0-3][0-9]
+*.hex
+*.d
+*.crf
+*.elf
+*.hex
+*.h86
+*.lib
+*.obj
+*.o
+*.sbr
 
-#images
-*.png
-*.jpg
-*.bmp
+# Build files
+*.bat  	# define exception below if needed
+*._ia
+*.__i
+*._ii
 
-#videos
-*.avi
-*.emf
+# Generated output files
+/Listings/*
+/Objects/*
 
-#audio files
-*.wav
+# Debugger files
+*.ini  	# define exception below if needed
 
-#spreadsheets
-*.xls
+# Other files
+*.build_log.htm
+*.cdb
+*.dep
+*.ic
+*.lin
+*.lnp
+*.orc
+*.pack 	# define exception below if needed
+*.pdsc 	# define exception below if needed
+*.plg
+*.sct  	# define exception below if needed
+*.sfd
+*.sfr
 
-#compiled html
-*.chm
-
-#directories
-_htmresc/
-Documentation/
-Projects/
-Examples/
-STM32F4-Discovery/
-STM32F4xx_Nucleo_144/
-STM32F4xx_Nucleo/
-STM32F401-Discovery/
-STM32F413H-Discovery/
-STM32F429I-Discovery/
-STM324x9I_EVAL/
-STM324xG_EVAL/
-STM32412G-Discovery/
-STM32446E_EVAL/
-STM32469I_EVAL/
-STM32469I-Discovery/
-Utilities/PC_Software/
+# Miscellaneous
+*.tra
+*.bin
+*.fed
+*.l1p
+*.l2p
+*.iex

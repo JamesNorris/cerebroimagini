@@ -68,3 +68,5 @@
 *.l1p
 *.l2p
 *.iex
+
+*.stackdump

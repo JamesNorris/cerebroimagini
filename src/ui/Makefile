@@ -27,8 +27,7 @@ test:
 
 local:
 	$(MAKE) clean
-	gcc wave.c -o wave.exe -llibSDL2 -llibfreetype -llibSDL2_ttf `$(SDL_DIR)/sdl2-config --cflags --libs` 
+	gcc wave.c -o wave.exe -lSDL2 -lfreetype -lSDL2_ttf -lm `$(SDL_DIR)/sdl2-config --cflags --libs` 
 	./wave.exe
-	
 clean:
 	rm -rf wave.exe

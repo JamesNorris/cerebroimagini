@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <math.h>
+#include <libusb.h>
+#include <string.h>
 
 //SDL2 includes
 #include "SDL.h"
@@ -34,6 +36,12 @@
 #define H_AX_LABELS 3
 #define H_AX_INCREMENT 500
 #define H_AX_RESOLUTION 1
+
+//definitions for libusb
+#define VID     0x154B
+#define PID     0x007A
+#define BULK_EP_OUT     0x82
+#define BULK_EP_IN      0x02
 
 SDL_Window* wdw;
 SDL_Renderer* rend;
@@ -163,6 +171,72 @@ int exit_check() {
 		default: break;//nothing
 	}
 	return 0;
+}
+bool usb_connect(libusb_device **devs, libusb_device_handle *handle, libusb_context *ctx){
+	//libusb_device **devs
+	//libusb_device_handle *handle
+	//libusb_context *ctx = NULL;
+	if(libusb_init(&ctx) < 0){
+		printf("\nInit Error");
+		return false;
+	}
+	libusb_set_debug(ctx, 3)
+	if(libusb_get_device_list(ctx, &devs) < 0){
+		printf("\nGet Device Error");
+		return false;
+	}
+	handle = libusb_open_device_with_vid_pid(ctx, VID, PID);
+	if(handle == NULL){
+		printf("\nCannot open device");
+		return false;
+	}
+	else{
+		printf("\nOpened Device");
+		
+	}
+	libusb_free_device_list(devs,1);
+	if(libusb_kernel_driver_active(handle,0) == 1){
+		printf("\nKernel Driver Active");
+        if(libusb_detach_kernel_driver(handle, 0) == 0)
+            printf("\nKernel Driver Detached!");
+	}
+	if(libusb_claim_interface(handle, 0) < 0){
+        printf("\nCannot Claim Interface");
+		return false;
+    }
+	printf("\nClaimed Interface");
+	
+	return true;
+}
+
+bool usb_disconnect(libusb_device_handle *handle, libusb_context *ctx){
+	if(libusb_release_interface(handle, 0) != 0){
+		printf("\nCan't release interface");
+		return false;
+	}
+	printf("\nReleasing interface....");
+    libusb_close(handle);
+    libusb_exit(ctx);
+	printf("\nRelease interface complete");
+	return true;
+}
+
+//op "0" = read and "1" =write
+int usb_read_write(libusb_device_handle *handle, int op){
+	int r = 0;
+	int nbytes = 256;
+	if(op == 0){
+		int received = 0;
+		unsigned char *data_in = new unsigned char [nbytes+1];
+		r = libusb_bulk_transfer(handle, BULK_EP_IN, data_in, nbytes, &received, 5000);
+	}
+	else if(op == 1){
+		int transferreed = 0;
+		int bytes_read = 0;
+		unsigned char *data_out = new unsigned char[nbytes+1];
+		r = libusb_bulk_transfer(handle, BULK_EP_OUT, data_out, bytes_read, &transferred, 5000);
+	}
+	return 1;
 }
 
 int main(int argc, char* argv[]) {
